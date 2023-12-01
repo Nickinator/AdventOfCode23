@@ -1,2 +1,12 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿namespace AdventOfCode23.Day01;
+
+class SolutionDay01
+{
+    static void Main(string[] args)
+    {
+        // Part One
+        SolutionDay01Part01.Solution();
+
+        // Part Two
+    }
+}
