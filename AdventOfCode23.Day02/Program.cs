@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode23.Day02;
 
-class SolutionDay01
+class SolutionDay02
 {
     static void Main(string[] args)
     {
