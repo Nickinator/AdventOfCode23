@@ -8,6 +8,6 @@ class SolutionDay05
         SolutionDay05Part01.Solution();
 
         // Part Two
-        SolutionDay05Part02.Solution();
+        //SolutionDay05Part02.Solution();
     }
 }
