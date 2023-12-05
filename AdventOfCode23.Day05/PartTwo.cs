@@ -1,21 +1,29 @@
+using System.IO.Pipes;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace AdventOfCode23.Day05;
 
 static class SolutionDay05Part02
 {
-    record SeedRange(long Start, long Length);
+    record SeedRange(long Start, long Length)
+    {
+        public bool ContainsValue(long value)
+        {
+            return value >= Start && value <= Start + Length;
+        }
+    }
     record Range(long Dest, long Src, long Length)
     {
-        public bool ContainsKey(long candidate)
+        public bool ContainsValue(long candidate)
         {
-            return candidate >= Src && candidate <= Src + Length;
+            return candidate >= Dest && candidate <= Dest + Length;
         }
 
-        public long GetValue(long key)
+        public long GetKey(long value)
         {
-            var offset = key - Src;
-            return Dest + offset;
+            var offset = value - Dest;
+            return Src + offset;
         }
     }
     class SeedMapper
@@ -77,42 +85,39 @@ static class SolutionDay05Part02
             return map;
         }
 
-        private long Lookup(long key, List<Range> map)
+        private long ReverseLookup(long value, List<Range> map)
         {
-            var range = map.Where(r => r.ContainsKey(key));
+            var range = map.Where(r => r.ContainsValue(value));
             if (!range.Any())
             {
-                return key;
+                return value;
             }
             else
             {
-                return range.ElementAt(0).GetValue(key);
+                return range.ElementAt(0).GetKey(value);
             }
         }
 
         public long GetMinLocation()
         {
-            var min = long.MaxValue;
-            foreach (var seed in _seeds)
+            var location = 0;
+            while (true)
             {
-                Console.WriteLine(seed.Length);
-                for (long i = seed.Start; i < seed.Start + seed.Length; i++)
-                {
-                    var soil = Lookup(i, _seedToSoil);
-                    var fertilizer = Lookup(soil, _soilToFertilizer);
-                    var water = Lookup(fertilizer, _fertilizerToWater);
-                    var light = Lookup(water, _waterToLight);
-                    var temperature = Lookup(light, _lightToTemperature);
-                    var humidity = Lookup(temperature, _temperatureToHumidity);
-                    var location = Lookup(humidity, _humidityToLocation);
-                    if (location < min)
-                    {
-                        min = location;
-                    }
-                }
-            }
+                var humidity = ReverseLookup(location, _humidityToLocation);
+                var temperature = ReverseLookup(humidity, _temperatureToHumidity);
+                var light = ReverseLookup(temperature, _lightToTemperature);
+                var water = ReverseLookup(light, _waterToLight);
+                var fertilizer = ReverseLookup(water, _fertilizerToWater);
+                var soil = ReverseLookup(fertilizer, _soilToFertilizer);
+                var seed = ReverseLookup(soil, _seedToSoil);
 
-            return min;
+                if (_seeds.Any(s => s.ContainsValue(seed)))
+                {
+                    return location;
+                }
+
+                location++;
+            }
         }
     }
 
