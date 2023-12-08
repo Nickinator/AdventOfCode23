@@ -4,38 +4,67 @@ namespace AdventOfCode23.Day08;
 
 static class SolutionDay08Part02
 {
-        record Node(string Id, string NextLeft, string NextRight);
+    record Node(string Id, string NextLeft, string NextRight);
     enum Direction {Left = 0, Right}
 
     public static void Solution()
     {
         var lines = File.ReadAllLines("input08.txt").ToList();
         var (directions, nodes) = Parse(lines);
-        var stepCount = Traverse(directions, nodes);
+        var pathLengths = Traverse(directions, nodes);
+
+        var stepCount = pathLengths
+            .Aggregate((x, y) => LCM(x, y));
+            
         Console.WriteLine(stepCount);
     }
 
-    static int Traverse(List<Direction> directions, List<Node> nodes)
+    static long GCD(long a, long b)
+    {
+        return a == 0
+            ? b 
+            : b == 0
+                ? a
+                : GCD(b, a % b); 
+    }
+
+    static long LCM(long a, long b)
+    {
+        return a * b / GCD(a, b); 
+    }
+
+    static IEnumerable<long> Traverse(List<Direction> directions, List<Node> nodes)
     {
         List<string> currentIds = nodes
             .Where(n => n.Id.EndsWith('A'))
             .Select(n => n.Id)
             .ToList();
+
+        var pathLengths = currentIds
+            .Select(id => FindPathLength(id, directions, nodes));
+        return pathLengths;
+    }
+
+    static long FindPathLength(string startId, List<Direction> directions, List<Node> nodes)
+    {
         int count = 0;
-
-        while (!currentIds.All(i => i.EndsWith('Z')))
+        int index = 0; // assigned here for debugging
+        var currentId = startId;
+        while (!currentId.EndsWith('Z'))
         {
-            var dir = directions[count % directions.Count];
-            var currentNodes = nodes.Where(n => currentIds.Contains(n.Id));
-            currentIds = currentNodes
-                .Select(n => dir == Direction.Left
-                    ? n.NextLeft
-                    : n.NextRight)
-                .ToList();
-
+            index = count % directions.Count;
+            var dir = directions[index];
+            var currentNode = nodes
+                .Where(n => n.Id == currentId)
+                .ElementAt(0);
+            currentId = dir == Direction.Left
+                ? currentNode.NextLeft
+                : currentNode.NextRight;
             count++;
         }
 
+        var debug = $"StartId: {startId} EndId: {currentId} Count: {count} Index: {index}";
+        Console.WriteLine(debug);
         return count;
     }
 
