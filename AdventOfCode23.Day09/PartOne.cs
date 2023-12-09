@@ -24,12 +24,11 @@ static class SolutionDay09Part01
             return 0;
         }
 
-        var differences = new List<int>();
-        for (int i = 0; i < dataset.Count - 1; i++)
-        {
-            var diff = dataset[i + 1] - dataset[i];
-            differences.Add(diff);
-        }
+        var differences = dataset
+            .Zip(
+                dataset.Skip(1),
+                (current, next) => next - current)
+            .ToList();
 
         dataset.Add(dataset.Last() + ExtrapolateSequence(differences));
         return dataset.Last();
