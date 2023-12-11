@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Xml;
 
 namespace AdventOfCode23.Day10;
 
@@ -25,7 +24,7 @@ static class SolutionDay10Part01
     {
         HashSet<Tile> _tiles = new();
         HashSet<Position> _visited = new();
-        Tile _start;
+        Tile _start = null!;
         Dictionary<char, ConnectorType> _tileTable = new()
         {
             {'.', ConnectorType.None},
