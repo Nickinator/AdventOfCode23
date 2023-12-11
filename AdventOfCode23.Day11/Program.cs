@@ -5,9 +5,9 @@ class SolutionDay11
     static void Main(string[] args)
     {
         // Part One
-        SolutionDay11Part01.Solution();
+        //SolutionDay11Part01.Solution();
 
         // Part Two
-        //SolutionDay11Part02.Solution();
+        SolutionDay11Part02.Solution();
     }
 }
