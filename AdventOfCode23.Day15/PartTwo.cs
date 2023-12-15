@@ -113,13 +113,12 @@ static class SolutionDay15Part02
         var operation = match.Groups[2].Value is "-"
             ? Operation.Removal
             : Operation.Insertion;
-        if (operation is Operation.Insertion)
-        {
-            var focalLength = int.Parse(match.Groups[3].Value);
-            return new Instruction(label, operation, boxId, focalLength);
-        }
+            
+        var focalLength = operation is Operation.Insertion
+            ? int.Parse(match.Groups[3].Value)
+            : 0;
 
-        return new Instruction(label, operation, boxId);
+        return new Instruction(label, operation, boxId, focalLength);
     }
 
     private static int Hash(string word)
